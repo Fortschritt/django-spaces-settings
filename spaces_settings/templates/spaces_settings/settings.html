@@ -1,0 +1,57 @@
+{% extends 'collab/plugin.html' %}
+
+{% load i18n collab_tags space_tags %}
+
+{% block content %}
+<div class="col-xl-6 col-xl-offset-3 col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<div class="panel panel-default">
+<div class="panel-body">
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+<h1>{% trans 'Settings' %} <small class="text-muted">{% trans 'for' %} {{ space.name }}</small></h1>
+<h2 class="m-t-lg">{% trans 'Available Plugins' %}</h2>
+</div>
+
+
+
+{% for plugin in space_plugins %}
+<div class="col-sm-4 col-xs-6">
+<div class="panel panel-default m-r m-t">
+<div class="panel-body text-center">
+		<h4>	{{ plugin.get_icon }} {{ plugin.title }}</h4>
+		<form method="POST" action="{% url 'spaces_settings:toggle_plugin' %}" class="">
+		{% csrf_token %}
+		<input type="hidden" name="plugin_name" value="{{ plugin.name }}">
+		<input type="hidden" name="plugin_active" 
+			value="{% if plugin|is_active:space %}False{% else %}True{% endif %}">
+		<div class="form-group row text-center">
+		<div class="">
+		<button type="submit" name="submit"
+			class="btn btn-{% if plugin|is_active:space %}warning{% else %}success{% endif %}">
+		{% if plugin|is_active:space %} 
+			<span class="icon icon-block">
+			{% trans 'Deactivate' %}
+		{% else %}
+			<span class="icon icon-power-plug">
+			{% trans 'Activate' %}
+		{% endif %}
+		</button>
+		</div>
+		</div>
+		</form>
+</div>
+</div>
+</div>
+{% endfor %}
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+<h2 class="m-t-lg">{% trans 'Other Settings' %}</h2>
+</div>
+<div class="col-md-12">
+<a href="{% url 'spaces_settings:delete' space_pk=space.pk%}" class="btn btn-danger pull-right">
+	<span class="icon icon-trash"></span>
+	{% trans 'Delete this Space' %}
+</a>
+</div>
+</div>
+</div>
+</div>
+{% endblock content %}
