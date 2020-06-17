@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
+import json
+
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.urlresolvers import reverse_lazy
 from django.forms.fields import BooleanField
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.utils.translation import ugettext as _
 from django.views.generic.edit import DeleteView
+
 from actstream.signals import action as actstream_action
+
 from collab.decorators import manager_required
 from collab.mixins import ManagerRequiredMixin
 from spaces.models import Space, SpacePluginRegistry
@@ -21,7 +26,7 @@ def settings(request):
     """
     The general settings page for a Space.
     """
-    if request.user.is_anonymous():
+    if request.user.is_anonymous:
         return HttpResponse(json.dumps({'success': True, 'space': request.SPACE.slug}), status=403)
     extra_context = base_extra_context(request)
     return render(request,'spaces_settings/settings.html',extra_context) 
